@@ -4,7 +4,7 @@ import streamlit as st
 import requests
 import base64
 
-API_URL = "http://127.0.0.1:8000"
+API_URL = "https://synthmed-ai-data-generator.onrender.com"
 
 st.set_page_config(layout="wide")
 st.title("🩺 SynthMed: AI-Powered Synthetic Dataset Generator")
