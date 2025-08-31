@@ -5,7 +5,7 @@ A full-stack, distributed AI application that generates high-quality, synthetic 
 ---
 
 ## 🚀 Live Demo
-*(Link to your live Streamlit App will go here once deployed!)*
+[Click here to view the live application!](https://synthmed-ai-data-generator-bcnr3ydyud2bhdysb2zlfq.streamlit.app/)
 
 ## 🎬 Video Demo
 *(Strongly recommended: Record a 30-second GIF/video of the app working and embed it here.)*
