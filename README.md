@@ -51,3 +51,9 @@ This project is a distributed system composed of a local web interface and a rem
 6.  Paste the URL into the `NGROK_URL` variable in `backend/main.py`.
 7.  Run the FastAPI backend: `uvicorn backend.main:app`
 8.  Run the Streamlit frontend: `streamlit run frontend/app.py`
+
+---
+## Known Limitations & Future Improvements
+
+*   **Request Timeout:** The live demo is hosted on Render's free tier, which has a 60-second request timeout. Therefore, generating large datasets (typically more than 2-3 images) will fail. The application is fully capable of generating larger datasets when run locally.
+*   **Future Improvement:** In a production environment, this timeout issue would be solved by implementing an asynchronous, non-blocking architecture. Instead of a single long-running request, the backend would immediately respond with a `job_id`, and the frontend would periodically poll a `/status` endpoint until the dataset is ready for download. This is precisely how the project was initially designed with Celery and Redis.
