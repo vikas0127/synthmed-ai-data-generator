@@ -1,26 +1,31 @@
-# backend/main.py 
+# backend/main.py (FINAL, BULLETPROOF VERSION)
 
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 import requests
 
+# --- PASTE YOUR LATEST NGROK URL FROM COLAB HERE ---
+NGROK_URL = "https://4c8d9e2433ea.ngrok-free.app"
 
-NGROK_URL = "https://22c98c8c232f.ngrok-free.app"
-
-# Add num_images to the request model 
 class GenerationRequest(BaseModel):
     age: int
     view: str
     finding: list[str]
     severity: str
-    num_images: int # This will come from the Streamlit UI
+    num_images: int
 
 app = FastAPI()
 
-@app.post("/generate_dataset") # Renamed to match Colab
+# --- NEW: ADD A ROOT ENDPOINT FOR HEALTH CHECKS ---
+# This proves to us and to Render that the app is alive.
+@app.get("/")
+def read_root():
+    return {"status": "ok", "message": "SynthMed Backend is running!"}
+
+@app.post("/generate_dataset")
 def post_generate(request: GenerationRequest):
-    # 1. Prompt Engineering
+    # 1. Prompt Engineering (no changes here)
     findings_str = ", ".join(request.finding)
     prompt = (
         f"High-resolution monochrome chest X-ray, {request.view} view, "
@@ -29,26 +34,38 @@ def post_generate(request: GenerationRequest):
         f"Medical imaging, photorealistic, 4k, detailed."
     )
 
-    # 2. Prepare payload for the remote worker
     colab_payload = {
         "prompt": prompt,
         "num_images": request.num_images
     }
 
-    # 3. Call the Remote AI Worker
-    print(f"Sending request for {request.num_images} images to Colab worker...")
+    # --- THIS ENTIRE BLOCK IS UPGRADED FOR ROBUSTNESS ---
+    print("Sending request to Colab worker...")
     try:
+        # NEW: Add a timeout to the request. We will wait 150 seconds for Colab to respond.
+        # This is longer than Render's gateway timeout, but good practice.
         colab_response = requests.post(
-            f"{NGROK_URL}/generate_dataset", # Using the new endpoint
+            f"{NGROK_URL}/generate_dataset",
             json=colab_payload,
-            headers={"Content-Type": "application/json"}
+            headers={"Content-Type": "application/json"},
+            timeout=150  # Timeout in seconds
         )
+        
+        # NEW: Check for non-200 status codes from Colab
+        # This will catch 404s, 500s, etc., from the Colab worker itself.
         colab_response.raise_for_status()
 
-        # 4. Forward the response (which contains the zip file)
-        print("Received zipped dataset from Colab. Forwarding to frontend.")
+        print("Received successful response from Colab. Forwarding to frontend.")
         return colab_response.json()
 
+    # NEW: Catch the specific exceptions for better logging
+    except requests.exceptions.Timeout:
+        # This error is critical. It will now be clearly printed in your Render logs.
+        print("ERROR: The request to the Colab worker timed out.")
+        return JSONResponse(status_code=504, content={"message": "The AI worker took too long to respond."})
+
     except requests.exceptions.RequestException as e:
-        print(f"Error calling Colab worker: {e}")
-        return JSONResponse(status_code=500, content={"message": "Failed to connect to the AI worker."})
+        # This will catch any other network error, like ConnectionError or a 404,
+        # and print the EXACT error message to your logs.
+        print(f"ERROR: An error occurred while calling the Colab worker: {e}")
+        return JSONResponse(status_code=500, content={"message": f"An error occurred with the AI worker: {e}"})
