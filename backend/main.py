@@ -6,7 +6,7 @@ from pydantic import BaseModel
 import requests
 
 
-NGROK_URL = "https://85aa5e7e6836.ngrok-free.app"
+NGROK_URL = "https://22c98c8c232f.ngrok-free.app"
 
 # Add num_images to the request model 
 class GenerationRequest(BaseModel):
