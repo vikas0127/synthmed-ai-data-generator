@@ -6,7 +6,7 @@ from pydantic import BaseModel
 import requests
 
 # --- PASTE YOUR LATEST NGROK URL FROM COLAB HERE ---
-NGROK_URL = "https://4c8d9e2433ea.ngrok-free.app"
+NGROK_URL = "https://05909d9d92b7.ngrok-free.app"
 
 class GenerationRequest(BaseModel):
     age: int
