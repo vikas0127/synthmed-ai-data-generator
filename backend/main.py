@@ -11,7 +11,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # --- PASTE YOUR LATEST NGROK URL FROM COLAB HERE ---
-NGROK_URL = "https://<your-latest-ngrok-url>.ngrok-free.app"
+NGROK_URL = "https://e231a9c0b241.ngrok-free.app"
 
 class GenerationRequest(BaseModel):
     age: int
