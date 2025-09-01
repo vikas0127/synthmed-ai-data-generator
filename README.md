@@ -8,7 +8,7 @@ A full-stack, distributed AI application that generates high-quality, synthetic 
 [Click here to view the live application!](https://synthmed-ai-data-generator.onrender.com)
 
 ## 🎬 Video Demo
-*(Strongly recommended: Record a 30-second GIF/video of the app working and embed it here.)*
+*![Image](https://github.com/user-attachments/assets/b34acac3-0293-4e6b-85af-77a4d424eb2d)*
 
 ![SynthMed Demo GIF](link_to_your_gif_goes_here.gif)
 
